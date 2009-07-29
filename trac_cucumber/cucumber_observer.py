@@ -10,8 +10,6 @@ class CommandCucumberObserver(Component):
 
     story_added_callback = Option("cucumber", "story_added_callback")
     story_edited_callback = Option("cucumber", "story_edited_callback")
-    story_directory = PathOption("cucumber", "story_directory")
-    output_directory = PathOption("cucumber", "output_directory")
 
     def story_added(self, story_name, story):
         if self.story_added_callback:
@@ -24,9 +22,7 @@ class CommandCucumberObserver(Component):
     def execute(self,command,story_name,story):
         story_file_name = self.database.story_file_name(story_name)
         self.log.debug("Executing %s %s" % (command, story_file_name))
-        proc = subprocess.Popen((command, story_file_name), stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.story_directory)
+        proc = subprocess.Popen((command, story_file_name), stdout=subprocess.PIPE)
         with open(self.database.output_file_name(story_name),"w") as out_file:
           out_file.write(proc.communicate()[0])
-        #with open(os.path.join(self.output_directory,'error.txt'),"a") as err_file:
-        #  err_file.write(proc.communicate()[1]+'\n')
             
