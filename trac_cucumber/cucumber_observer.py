@@ -24,8 +24,9 @@ class CommandCucumberObserver(Component):
     def execute(self,command,story_name,story):
         story_file_name = self.database.story_file_name(story_name)
         self.log.debug("Executing %s %s" % (command, story_file_name))
-        with open(os.path.join(self.output_directory,'output.txt'),"w") as out_file:
-          with open(os.path.join(self.output_directory,'error.txt'),"a") as err_file:
-            err_file.write("Executing %s %s\n" % (command, story_file_name))
-            #subprocess.check_call((command, story_file_name), executable=command,  stdout=out_file, stderr=err_file, shell=False, cwd=self.story_directory, env=None)
-            os.system("%s %s" % (command, story_file_name))
+        proc = subprocess.Popen((command, story_file_name), stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=self.story_directory)
+        with open(self.database.output_file_name(story_name),"w") as out_file:
+          out_file.write(proc.communicate()[0])
+        #with open(os.path.join(self.output_directory,'error.txt'),"a") as err_file:
+        #  err_file.write(proc.communicate()[1]+'\n')
+            
