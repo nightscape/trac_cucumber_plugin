@@ -1,5 +1,5 @@
 from interfaces import *
-from trac.config import Option
+from trac.config import Option, PathOption
 import os
 import subprocess
 
@@ -22,4 +22,4 @@ class CommandCucumberObserver(Component):
             self.execute(self.story_edited_callback,story_name,story)
 
     def execute(self,command,story_name,story):
-        subprocess.Popen((command, story_name), executable=command,  stdout=open(os.path.join(output_directory,'output.txt'),"w"), stderr=open(os.path.join(output_directory,'error.txt'),"w"), shell=False, cwd=story_directory, env=None)
+        subprocess.Popen((command, story_name+'.feature'), executable=command,  stdout=open(os.path.join(self.output_directory,'output.txt'),"w"), stderr=open(os.path.join(self.output_directory,'error.txt'),"w"), shell=False, cwd=self.story_directory, env=None)
