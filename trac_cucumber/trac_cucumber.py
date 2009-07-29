@@ -5,6 +5,8 @@ from interfaces import *
 
 from pkg_resources import resource_filename
 
+
+
 class TracCucumberPlugin(Component):
     implements(IWikiMacroProvider)
 
@@ -48,6 +50,7 @@ class TracCucumberPlugin(Component):
         """
 
     def expand_macro(self, formatter, name, content):
+        self.log.debug('Using Cucumber macro')
         story_name, story = self.parse_story(content)
         return self.process_and_render_story(formatter, story_name, story)
 
@@ -63,11 +66,13 @@ class TracCucumberPlugin(Component):
 
     def process_and_render_story(self, formatter, story_name, story):
         if self.database.is_new_story(story_name):
+            self.log.debug('Processing new Cucumber story %s'%story_name)
             self.database.save_story(story_name, story)
             self.observer.story_added(story_name, story)
             return self.renderer.render_new_story(formatter, story_name, story)
 
         elif self.database.is_changed_story(story_name, story):
+            self.log.debug('Processing changed Cucumber story %s'%story_name)
             self.database.save_story(story_name, story)
             self.observer.story_edited(story_name, story)
             return self.renderer.render_changed_story(formatter, story_name, story)
